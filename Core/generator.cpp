@@ -23,7 +23,7 @@ bool Node::calc_val() {
 		}
 		else if (dat.opr == SUB) {
 			if (lval < rval) return false;
-			val = lval + rval;
+			val = lval - rval;
 		}
 		else if (dat.opr == MUL) {
 			val = lval * rval;
@@ -39,7 +39,8 @@ bool Node::calc_val() {
 
 
 NUMTYPE Node::get_val() {
-	assert(calculated);
+	// assert(calculated);
+	if(!calculated) calc_val();
 	return val;
 }
 
@@ -63,6 +64,7 @@ bool equal(const Node * t1, const Node * t2) {
 int prior(OPRTYPE type) {
 	if (type == ADD || type == SUB) return 1;
 	else if (type == MUL || type == DIV) return 2;
+	else return -1;
 }
 
 
@@ -133,7 +135,19 @@ Node * Generator::generate_tree(int limit) {
 bool Generator::generate() {
 	arr.clear();
 	for (int i = 0; i < setting.exp_num; i++) {
-		arr.push_back(generate_tree(setting.num_limit));
+		Node * p;
+		bool different;
+		do {
+			different = true;
+			p = generate_tree(setting.num_limit);
+			for (int j = 0; j < i; j++) {
+				if (equal(p, arr[i])) {
+					different = false;
+					break;
+				}
+			}
+		} while (!different);
+		arr.push_back(p);
 	}
 	return true;
 }

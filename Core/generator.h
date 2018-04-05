@@ -29,7 +29,10 @@ private:
 public:
 	Node(NUMTYPE num) { type = NUM; dat.num = num; }
 	Node(OPRTYPE opr) { type = OPR; dat.opr = opr; }
-	~Node() { delete lchild; delete rchild; }
+	~Node() {
+		if(lchild) delete lchild;
+		if(rchild) delete rchild;
+	}
 
 	void set_lchild(Node * p) { lchild = p; calculated = false; }
 	void set_rchild(Node * p) { rchild = p; calculated = false; }
